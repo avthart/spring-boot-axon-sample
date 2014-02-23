@@ -2,6 +2,9 @@ package nl.avthart.todo.app.domain.task.commands;
 
 import org.axonframework.commandhandling.annotation.TargetAggregateIdentifier;
 
+/**
+ * @author albert
+ */
 public class CompleteTaskCommand {
 
 	@TargetAggregateIdentifier

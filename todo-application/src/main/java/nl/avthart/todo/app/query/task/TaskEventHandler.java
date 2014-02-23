@@ -8,6 +8,9 @@ import org.axonframework.eventhandling.annotation.EventHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * @author albert
+ */
 @Component
 public class TaskEventHandler {
 
@@ -34,7 +37,7 @@ public class TaskEventHandler {
 	@EventHandler
 	void on(TitleModifiedEvent event) {
 		TaskEntry task = taskQueryRepository.findOne(event.getIdentifier());
-		task.setTitle(event.getIdentifier());
+		task.setTitle(event.getTitle());
 		
 		taskQueryRepository.save(task);
 	}

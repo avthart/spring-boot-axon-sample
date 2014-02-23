@@ -18,7 +18,6 @@ import org.axonframework.eventsourcing.annotation.AggregateIdentifier;
 
 /**
  * Task
- * 
  * @author albert
  */
 @Entity
@@ -44,6 +43,9 @@ public class Task extends AbstractAnnotatedAggregateRoot<String> {
 	@CommandHandler
 	public Task(CreateTaskCommand command) {
 		apply(new TaskCreatedEvent(command.getIdentifier(), command.getTitle()));
+	}
+	
+	Task() {
 	}
 
 	/**
@@ -79,7 +81,7 @@ public class Task extends AbstractAnnotatedAggregateRoot<String> {
 	
 	private void assertNotCompleted() {
 		if (completed) {
-			throw new TaskCompletedException("Task [ identifier = " + identifier + " ] is completed.");
+			throw new TaskAlreadyCompletedException("Task [ identifier = " + identifier + " ] is completed.");
 		}		
 	}
 }

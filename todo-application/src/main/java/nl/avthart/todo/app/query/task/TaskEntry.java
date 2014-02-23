@@ -3,6 +3,9 @@ package nl.avthart.todo.app.query.task;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+/**
+ * @author albert
+ */
 @Entity
 public class TaskEntry {
 

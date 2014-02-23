@@ -5,7 +5,8 @@ import java.util.UUID;
 import javax.validation.constraints.NotNull;
 
 /**
- *  Abstract Command class which generates an UUID identifier on creation 
+ * Abstract Command class which generates an UUID identifier on creation 
+ * @author albert
  */
 public abstract class AbstractIdentifierCommand {
 
