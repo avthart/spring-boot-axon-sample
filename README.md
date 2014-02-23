@@ -1,4 +1,19 @@
-spring-boot-axon-sample
-=======================
+Introduction
+============
+This is a sample application to demonstrate Spring Boot and Axon Framework (using Java Config).
 
-spring-boot-axon-sample
+Building
+========
+> mvn package
+
+Running
+=======
+> spring spring-boot:run
+
+Browse to http://localhost:8080/index.html
+
+
+Documentation
+=============
+* Spring Boot
+* Axon Framework
