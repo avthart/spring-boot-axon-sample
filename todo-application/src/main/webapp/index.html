@@ -1,0 +1,130 @@
+<html ng-app>
+<head>
+<title>Todo App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/css/bootstrap.min.css" type="text/css" rel="stylesheet">
+<link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.min.css" type="text/css" rel="stylesheet">
+</head>
+<body ng-controller="TaskCtrl" style="background: url('bg-wood.jpg');">
+	<div class="container" style="padding-top: 100px;">
+		<div class="row">
+			<div class="col-md-offset-3 col-md-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title"><i class="fa fa-tasks"></i> Tasks</h3>
+					</div>
+					<div class="panel-body">
+					<ul class="list-group">
+						<li class="list-group-item">
+							<form style="margin: 0px" role="form" ng-submit="addTask()">
+   								<input type="text" class="form-control input-lg" id="title" placeholder="Add a new task..." ng-model="newTask.title">
+   							</form>
+						</li>
+  						<li ng-repeat="task in tasks" class="list-group-item">
+  							<a class="btn btn-link" ng-href ng-click="completeTask(task)"><i class="fa fa-square-o"></i></a>
+							<span ng-click="showTaskDetails(task)">{{task.title}}</span>
+							<a ng-show="!task.starred" class="btn btn-link pull-right" ng-href ng-click="starTask(task)"><i class="fa fa-star-o"></i></a>
+							<a ng-show="task.starred" class="btn btn-link pull-right" ng-href ng-click="unstarTask(task)"><i class="fa fa-star"></i></a>
+						</li>
+					</ul>
+					<div ng-show="completedTasks.length > 0">
+						<p class="text-muted">{{completedTasks.length}} completed tasks</p>
+						<ul class="list-group">
+							<li ng-repeat="task in completedTasks" class="list-group-item text-muted" style="text-decoration:line-through;">
+								<a class="btn btn-link" ng-href><i class="fa fa-check-square-o"></i></a>
+								{{task.title}} 
+								<a ng-show="!task.starred" class="btn btn-link pull-right" ng-href><i class="fa fa-star-o"></i></a>
+								<a ng-show="task.starred" class="btn btn-link pull-right" ng-href><i class="fa fa-star"></i></a>
+							</li>
+						</ul>
+					</div>					
+					</div>
+				</div>
+			</div>
+			<div ng-show="taskDetails" class="col-md-3">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<form style="margin: 0px" role="form" ng-submit="modifyTaskTitle(taskDetails)">
+							<input type="text" class="form-control" ng-model="taskDetails.title">
+						</form>
+					</div>
+					<div class="panel-body">
+						<ul class="list-group">
+							<li class="list-group-item">
+								<a class="btn btn-link" ng-href ng-click="completeTask(taskDetails)"><i class="fa fa-square-o"></i> Complete</a>
+							</li>
+							<li class="list-group-item">
+								<a class="btn btn-link" ng-href><i class="fa fa-user"></i> Assign to</a>
+							</li>
+							<li class="list-group-item">
+								<a class="btn btn-link" ng-href><i class="fa fa-calendar"></i> Set due date</a>
+							</li>
+							<li class="list-group-item">
+								<a class="btn btn-link" ng-href><i class="fa fa-clock-o"></i> Remind me</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/js/bootstrap.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.10/angular.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.10/angular-route.min.js"></script>
+	<script type="text/javascript">
+		function TaskCtrl($scope, $http, $timeout) {
+			$scope.loadTasks = function() {
+				$scope.taskDetails = null;
+				$http.get('api/tasks/').then(function(response) {
+					$scope.tasks = response.data.content;
+				});
+				$http.get('api/tasks/?completed=true').then(function(response) {
+					$scope.completedTasks = response.data.content;
+				});
+			};
+			
+			$scope.addTask = function() {
+				$http.post('api/tasks/', $scope.newTask).then(function(response) {
+					$scope.newTask = '';
+					$timeout(function() { $scope.loadTasks(); });
+				});
+			};
+			
+			$scope.starTask = function(task) {
+				$http.post('api/tasks/' + task.id + '/star').then(function(response) {
+					$timeout(function() { $scope.loadTasks(); });
+				});
+			};
+			
+			$scope.unstarTask = function(task) {
+				$http.post('api/tasks/' + task.id + '/unstar').then(function(response) {
+					$timeout(function() { $scope.loadTasks(); });
+				});
+			};
+			
+			$scope.completeTask = function(task) {
+				$http.post('api/tasks/' + task.id + '/complete').then(function(response) {
+					$scope.taskDetails = null;
+					$timeout(function() { $scope.loadTasks(); });
+				});
+			};
+			
+			$scope.showTaskDetails = function(task) {
+				$scope.taskDetails = task;
+			};
+			
+			$scope.modifyTaskTitle = function(task) {
+				$http.post('api/tasks/' + task.id + '/title', {'title': $scope.taskDetails.title}).then(function(response) {
+					$timeout(function() { $scope.loadTasks(); });
+				});
+			};
+			
+			$scope.loadTasks();
+		};
+	</script>
+</body>
+</html>
