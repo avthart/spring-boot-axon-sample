@@ -7,8 +7,12 @@ import javax.validation.constraints.NotNull;
 import nl.avthart.todo.app.domain.task.commands.CompleteTaskCommand;
 import nl.avthart.todo.app.domain.task.commands.CreateTaskCommand;
 import nl.avthart.todo.app.domain.task.commands.ModifyTitleCommand;
+import nl.avthart.todo.app.domain.task.commands.StarTaskCommand;
+import nl.avthart.todo.app.domain.task.commands.UnstarTaskCommand;
 import nl.avthart.todo.app.domain.task.events.TaskCompletedEvent;
 import nl.avthart.todo.app.domain.task.events.TaskCreatedEvent;
+import nl.avthart.todo.app.domain.task.events.TaskStarredEvent;
+import nl.avthart.todo.app.domain.task.events.TaskUnstarredEvent;
 import nl.avthart.todo.app.domain.task.events.TitleModifiedEvent;
 
 import org.axonframework.commandhandling.annotation.CommandHandler;
@@ -30,7 +34,7 @@ public class Task extends AbstractAnnotatedAggregateRoot<String> {
 	
 	@AggregateIdentifier
 	@Id
-	private String identifier;
+	private String id;
 	
 	@NotNull
 	private boolean completed;
@@ -59,6 +63,26 @@ public class Task extends AbstractAnnotatedAggregateRoot<String> {
 	}
 	
 	/**
+	 * Stars a Task.
+	 * 
+	 * @param command star Task
+	 */
+	@CommandHandler
+	void on(StarTaskCommand command) {
+		apply(new TaskStarredEvent(command.getIdentifier()));
+	}
+	
+	/**
+	 * Unstars a Task.
+	 * 
+	 * @param command unstar Task
+	 */
+	@CommandHandler
+	void on(UnstarTaskCommand command) {
+		apply(new TaskUnstarredEvent(command.getIdentifier()));
+	}
+	
+	/**
 	 * Modifies a Task title.
 	 * 
 	 * @param command modify Task title
@@ -71,7 +95,7 @@ public class Task extends AbstractAnnotatedAggregateRoot<String> {
 	
 	@EventHandler
 	void on(TaskCreatedEvent event) {
-		this.identifier = event.getIdentifier();
+		this.id = event.getIdentifier();
 	}
 	
 	@EventHandler
@@ -81,7 +105,7 @@ public class Task extends AbstractAnnotatedAggregateRoot<String> {
 	
 	private void assertNotCompleted() {
 		if (completed) {
-			throw new TaskAlreadyCompletedException("Task [ identifier = " + identifier + " ] is completed.");
+			throw new TaskAlreadyCompletedException("Task [ identifier = " + id + " ] is completed.");
 		}		
 	}
 }

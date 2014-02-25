@@ -1,6 +1,12 @@
 Introduction
 ============
-This is a sample application to demonstrate Spring Boot and Axon Framework (using Java Config).
+This is a sample application to demonstrate Spring Boot and Axon Framework.
+
+The Todo application makes use of the following design patterns:
+- Domain Driven Design
+- CQRS
+- Event Sourcing
+- Task based User Interface
 
 Building
 ========
@@ -27,5 +33,5 @@ Complete task:
 
 Documentation
 =============
-* Spring Boot
-* Axon Framework
+* Spring Boot - http://projects.spring.io/spring-boot/
+* Axon Framework - http://www.axonframework.org/

@@ -5,6 +5,8 @@ import javax.validation.Valid;
 import nl.avthart.todo.app.domain.task.commands.CompleteTaskCommand;
 import nl.avthart.todo.app.domain.task.commands.CreateTaskCommand;
 import nl.avthart.todo.app.domain.task.commands.ModifyTitleCommand;
+import nl.avthart.todo.app.domain.task.commands.StarTaskCommand;
+import nl.avthart.todo.app.domain.task.commands.UnstarTaskCommand;
 import nl.avthart.todo.app.query.task.TaskEntry;
 import nl.avthart.todo.app.query.task.TaskQueryRepository;
 import nl.avthart.todo.app.rest.task.requests.CreateTaskRequest;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,8 +39,8 @@ public class TaskController {
 	private CommandGateway commandGateway;
 	
 	@RequestMapping(value = "/api/tasks", method = RequestMethod.GET)
-	public @ResponseBody Page<TaskEntry> tasks(Pageable pageRequest) {
-		return taskQueryRepository.findAll(pageRequest);	
+	public @ResponseBody Page<TaskEntry> findlAll(@RequestParam(required = false, defaultValue = "false") boolean completed, Pageable pageable) {
+		return taskQueryRepository.findByCompleted(completed, pageable);	
 	}
 	
 	@RequestMapping(value = "/api/tasks", method = RequestMethod.POST)
@@ -56,5 +59,17 @@ public class TaskController {
 	@ResponseStatus(value = HttpStatus.OK)
 	public void createTask(@PathVariable String identifier) {
 		commandGateway.sendAndWait(new CompleteTaskCommand(identifier));
+	}
+	
+	@RequestMapping(value = "/api/tasks/{identifier}/star", method = RequestMethod.POST)
+	@ResponseStatus(value = HttpStatus.OK)
+	public void starTask(@PathVariable String identifier) {
+		commandGateway.sendAndWait(new StarTaskCommand(identifier));
+	}
+	
+	@RequestMapping(value = "/api/tasks/{identifier}/unstar", method = RequestMethod.POST)
+	@ResponseStatus(value = HttpStatus.OK)
+	public void unstarTask(@PathVariable String identifier) {
+		commandGateway.sendAndWait(new UnstarTaskCommand(identifier));
 	}
 }

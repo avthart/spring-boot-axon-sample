@@ -10,18 +10,20 @@ import javax.persistence.Id;
 public class TaskEntry {
 
 	@Id
-	private String identifier;
+	private String id;
 	
 	private String title;
-
+	
 	private boolean completed;
+	
+	private boolean starred;
 
-	public String getIdentifier() {
-		return identifier;
+	public String getId() {
+		return id;
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getTitle() {
@@ -39,4 +41,12 @@ public class TaskEntry {
 	public boolean isCompleted() {
 		return completed;
 	}
+	
+	public void setStarred(boolean starred) {
+		this.starred = starred;
+	}
+	
+	public boolean isStarred() {
+		return starred;
+	}	
 }
