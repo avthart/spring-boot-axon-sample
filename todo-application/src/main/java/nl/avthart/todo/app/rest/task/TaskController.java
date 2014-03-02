@@ -17,6 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,15 +38,19 @@ public class TaskController {
 
 	@Autowired
 	private TaskQueryRepository taskQueryRepository;
+
+	@Autowired
+	private SimpMessageSendingOperations messagingTemplate;
 	
 	@Autowired
 	private CommandGateway commandGateway;
-	
+
 	@RequestMapping(value = "/api/tasks", method = RequestMethod.GET)
-	public @ResponseBody Page<TaskEntry> findlAll(@RequestParam(required = false, defaultValue = "false") boolean completed, Pageable pageable) {
-		return taskQueryRepository.findByCompleted(completed, pageable);	
+	public @ResponseBody
+	Page<TaskEntry> findlAll(@RequestParam(required = false, defaultValue = "false") boolean completed, Pageable pageable) {
+		return taskQueryRepository.findByCompleted(completed, pageable);
 	}
-	
+
 	@RequestMapping(value = "/api/tasks", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.CREATED)
 	public void createTask(@RequestBody @Valid CreateTaskRequest request) {
@@ -51,7 +59,8 @@ public class TaskController {
 
 	@RequestMapping(value = "/api/tasks/{identifier}/title", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
-	public void createTask(@PathVariable String identifier, @RequestBody @Valid ModifyTitleRequest request) {
+	public void createTask(@PathVariable String identifier,
+			@RequestBody @Valid ModifyTitleRequest request) {
 		commandGateway.sendAndWait(new ModifyTitleCommand(identifier, request.getTitle()));
 	}
 
@@ -60,16 +69,23 @@ public class TaskController {
 	public void createTask(@PathVariable String identifier) {
 		commandGateway.sendAndWait(new CompleteTaskCommand(identifier));
 	}
-	
+
 	@RequestMapping(value = "/api/tasks/{identifier}/star", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
 	public void starTask(@PathVariable String identifier) {
 		commandGateway.sendAndWait(new StarTaskCommand(identifier));
 	}
-	
+
 	@RequestMapping(value = "/api/tasks/{identifier}/unstar", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
 	public void unstarTask(@PathVariable String identifier) {
-		commandGateway.sendAndWait(new UnstarTaskCommand(identifier));
+		throw new RuntimeException("Could not unstar task..."); 
+		//commandGateway.sendAndWait(new UnstarTaskCommand(identifier));
 	}
+
+	@ExceptionHandler
+	public void handleException(Throwable exception) {
+		messagingTemplate.convertAndSend("/queue/errors", exception.getMessage());
+	}
+
 }
