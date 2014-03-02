@@ -8,5 +8,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * @author albert
  */
 public interface TaskQueryRepository extends PagingAndSortingRepository<TaskEntry, String> {
-	Page<TaskEntry> findByCompleted(boolean completed, Pageable pageable);
+	Page<TaskEntry> findByUsernameAndCompleted(String username, boolean completed, Pageable pageable);
 }

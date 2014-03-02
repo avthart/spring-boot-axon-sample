@@ -46,7 +46,7 @@ public class Task extends AbstractAnnotatedAggregateRoot<String> {
 	 */
 	@CommandHandler
 	public Task(CreateTaskCommand command) {
-		apply(new TaskCreatedEvent(command.getIdentifier(), command.getTitle()));
+		apply(new TaskCreatedEvent(command.getIdentifier(), command.getUsername(), command.getTitle()));
 	}
 	
 	Task() {

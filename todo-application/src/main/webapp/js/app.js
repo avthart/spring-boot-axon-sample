@@ -7,7 +7,7 @@ function TaskCtrl($scope, $http, $timeout, toaster) {
 	var socket = new SockJS('/tasks');
 	stompClient = Stomp.over(socket);
 	stompClient.connect({}, function(frame) {
-		stompClient.subscribe('/topic/tasks', function(event) {
+		stompClient.subscribe('/user/queue/task-updates', function(event) {
 			var taskEvent = JSON.parse(event.body);
 			toaster.pop('success', taskEvent.type, taskEvent.data.title);
 			if (taskEvent.type == "ADDED") {
@@ -29,7 +29,7 @@ function TaskCtrl($scope, $http, $timeout, toaster) {
 
 			$scope.$apply();
 		});
-		stompClient.subscribe('/queue/errors', function(event) {
+		stompClient.subscribe('/user/queue/errors', function(event) {
 			toaster.pop('error', "Error", event.body);
 			$scope.$apply();
 		});

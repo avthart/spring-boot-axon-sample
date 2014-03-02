@@ -33,7 +33,8 @@ public class TaskEventHandler {
 	void on(TaskCreatedEvent event) {
 		TaskEntry task = new TaskEntry();
 		task.setId(event.getIdentifier());
-		task.setTitle(event.getTitle());
+		task.setUsername(event.getUsername());
+		task.setTitle(event.getTitle());		
 		
 		taskQueryRepository.save(task);
 
@@ -81,6 +82,6 @@ public class TaskEventHandler {
 	}
 	
 	private void publish(Type type, TaskEntry task) {
-		this.messagingTemplate.convertAndSend("/topic/tasks", new TaskQueryEvent(type, task));
+		this.messagingTemplate.convertAndSendToUser(task.getUsername(), "/queue/task-updates", new TaskQueryEvent(type, task));
 	}
 }

@@ -7,13 +7,20 @@ import nl.avthart.todo.app.domain.support.AbstractIdentifierCommand;
  */
 public class CreateTaskCommand extends AbstractIdentifierCommand {
 
+	private final String username;
+	
 	private final String title;
 
-	public CreateTaskCommand(String title) {
+	public CreateTaskCommand(String username, String title) {
+		this.username = username;
 		this.title = title;
 	}
 	
 	public String getTitle() {
 		return title;
-	}	
+	}
+	
+	public String getUsername() {
+		return username;
+	}
 }

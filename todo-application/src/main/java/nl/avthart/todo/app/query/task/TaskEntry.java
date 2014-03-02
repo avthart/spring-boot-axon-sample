@@ -12,6 +12,8 @@ public class TaskEntry {
 	@Id
 	private String id;
 	
+	private String username;
+	
 	private String title;
 	
 	private boolean completed;
@@ -48,5 +50,13 @@ public class TaskEntry {
 	
 	public boolean isStarred() {
 		return starred;
-	}	
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	public String getUsername() {
+		return username;
+	}
 }

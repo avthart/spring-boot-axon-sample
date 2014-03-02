@@ -1,12 +1,13 @@
 package nl.avthart.todo.app.rest.task;
 
+import java.security.Principal;
+
 import javax.validation.Valid;
 
 import nl.avthart.todo.app.domain.task.commands.CompleteTaskCommand;
 import nl.avthart.todo.app.domain.task.commands.CreateTaskCommand;
 import nl.avthart.todo.app.domain.task.commands.ModifyTitleCommand;
 import nl.avthart.todo.app.domain.task.commands.StarTaskCommand;
-import nl.avthart.todo.app.domain.task.commands.UnstarTaskCommand;
 import nl.avthart.todo.app.query.task.TaskEntry;
 import nl.avthart.todo.app.query.task.TaskQueryRepository;
 import nl.avthart.todo.app.rest.task.requests.CreateTaskRequest;
@@ -17,8 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,20 +46,19 @@ public class TaskController {
 
 	@RequestMapping(value = "/api/tasks", method = RequestMethod.GET)
 	public @ResponseBody
-	Page<TaskEntry> findlAll(@RequestParam(required = false, defaultValue = "false") boolean completed, Pageable pageable) {
-		return taskQueryRepository.findByCompleted(completed, pageable);
+	Page<TaskEntry> findlAll(Principal principal, @RequestParam(required = false, defaultValue = "false") boolean completed, Pageable pageable) {
+		return taskQueryRepository.findByUsernameAndCompleted(principal.getName(), completed, pageable);
 	}
 
 	@RequestMapping(value = "/api/tasks", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.CREATED)
-	public void createTask(@RequestBody @Valid CreateTaskRequest request) {
-		commandGateway.sendAndWait(new CreateTaskCommand(request.getTitle()));
+	public void createTask(Principal principal, @RequestBody @Valid CreateTaskRequest request) {
+		commandGateway.sendAndWait(new CreateTaskCommand(principal.getName(), request.getTitle()));
 	}
 
 	@RequestMapping(value = "/api/tasks/{identifier}/title", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
-	public void createTask(@PathVariable String identifier,
-			@RequestBody @Valid ModifyTitleRequest request) {
+	public void createTask(@PathVariable String identifier, @RequestBody @Valid ModifyTitleRequest request) {
 		commandGateway.sendAndWait(new ModifyTitleCommand(identifier, request.getTitle()));
 	}
 
@@ -84,8 +82,8 @@ public class TaskController {
 	}
 
 	@ExceptionHandler
-	public void handleException(Throwable exception) {
-		messagingTemplate.convertAndSend("/queue/errors", exception.getMessage());
+	public void handleException(Principal principal, Throwable exception) {
+		messagingTemplate.convertAndSendToUser(principal.getName(), "/queue/errors", exception.getMessage());
 	}
 
 }

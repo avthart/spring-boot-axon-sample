@@ -7,10 +7,13 @@ public class TaskCreatedEvent {
 
 	private final String identifier;
 	
-	private final String title;
+	private final String username;
+	
+	private final String title;	
 
-	public TaskCreatedEvent(String identifier, String title) {
+	public TaskCreatedEvent(String identifier, String username, String title) {
 		this.identifier = identifier;
+		this.username = username;
 		this.title = title;
 	}
 	
@@ -20,5 +23,9 @@ public class TaskCreatedEvent {
 	
 	public String getTitle() {
 		return title;
+	}
+	
+	public String getUsername() {
+		return username;
 	}
 }
