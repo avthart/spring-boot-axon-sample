@@ -1,17 +1,12 @@
 package nl.avthart.todo.app.domain.task.events;
 
+import lombok.Value;
+
 /**
  * @author albert
  */
-public class TaskUnstarredEvent {
+@Value
+public class TaskUnstarredEvent implements TaskEvent {
 
-	private final String identifier;
-	
-	public TaskUnstarredEvent(String identifier) {
-		this.identifier = identifier;
-	}
-	
-	public String getIdentifier() {
-		return identifier;
-	}
+	private final String id;
 }

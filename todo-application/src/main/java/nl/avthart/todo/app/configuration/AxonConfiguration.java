@@ -1,5 +1,6 @@
 package nl.avthart.todo.app.configuration;
 
+import java.io.File;
 import java.util.Arrays;
 
 import nl.avthart.todo.app.domain.task.Task;
@@ -11,20 +12,14 @@ import org.axonframework.commandhandling.annotation.AnnotationCommandHandlerBean
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.commandhandling.gateway.CommandGatewayFactoryBean;
 import org.axonframework.commandhandling.interceptors.BeanValidationInterceptor;
-import org.axonframework.common.jpa.ContainerManagedEntityManagerProvider;
-import org.axonframework.common.jpa.EntityManagerProvider;
 import org.axonframework.eventhandling.EventBus;
 import org.axonframework.eventhandling.SimpleEventBus;
 import org.axonframework.eventhandling.annotation.AnnotationEventListenerBeanPostProcessor;
-import org.axonframework.repository.GenericJpaRepository;
-import org.axonframework.unitofwork.SpringTransactionManager;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.axonframework.eventsourcing.EventSourcingRepository;
+import org.axonframework.eventstore.fs.FileSystemEventStore;
+import org.axonframework.eventstore.fs.SimpleEventFileResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * Axon Java Configuration with reasonable defaults like SimpleCommandBus, SimpleEventBus and GenericJpaRepository.
@@ -33,8 +28,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 public class AxonConfiguration {
 	
-	@Autowired
-	private PlatformTransactionManager transactionManager;
+//	@Autowired
+//	private PlatformTransactionManager transactionManager;
 	
 	@Bean
 	public AnnotationEventListenerBeanPostProcessor annotationEventListenerBeanPostProcessor() {
@@ -54,7 +49,7 @@ public class AxonConfiguration {
 	public CommandBus commandBus() {
 		SimpleCommandBus commandBus = new SimpleCommandBus();
 		commandBus.setHandlerInterceptors(Arrays.asList(new BeanValidationInterceptor()));
-		commandBus.setTransactionManager(new SpringTransactionManager(transactionManager));
+//		commandBus.setTransactionManager(new SpringTransactionManager(transactionManager));
 		return commandBus;
 	}
 
@@ -70,14 +65,15 @@ public class AxonConfiguration {
 		return factory;
 	}
 
-	@Bean
-	public EntityManagerProvider entityManagerProvider() {
-		return new ContainerManagedEntityManagerProvider();
-	}
+//	@Bean
+//	public EntityManagerProvider entityManagerProvider() {
+//		return new ContainerManagedEntityManagerProvider();
+//	}
 	
 	@Bean
-	public GenericJpaRepository<Task> taskRepository() {
-		GenericJpaRepository<Task> repository = new GenericJpaRepository<Task>(entityManagerProvider(), Task.class);
+	public EventSourcingRepository<Task> taskRepository() {
+		FileSystemEventStore eventStore = new FileSystemEventStore(new SimpleEventFileResolver(new File("data/evenstore")));
+		EventSourcingRepository<Task> repository = new EventSourcingRepository<Task>(Task.class, eventStore);
 		repository.setEventBus(eventBus());
 		return repository;
 	}

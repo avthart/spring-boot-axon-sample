@@ -1,26 +1,21 @@
 package nl.avthart.todo.app.domain.task.commands;
 
-import nl.avthart.todo.app.domain.support.AbstractIdentifierCommand;
+import javax.validation.constraints.NotNull;
+
+import lombok.Value;
 
 /**
  * @author albert
  */
-public class CreateTaskCommand extends AbstractIdentifierCommand {
+@Value
+public class CreateTaskCommand {
 
+	@NotNull
+	private final String id;
+	
+	@NotNull
 	private final String username;
 	
+	@NotNull
 	private final String title;
-
-	public CreateTaskCommand(String username, String title) {
-		this.username = username;
-		this.title = title;
-	}
-	
-	public String getTitle() {
-		return title;
-	}
-	
-	public String getUsername() {
-		return username;
-	}
 }

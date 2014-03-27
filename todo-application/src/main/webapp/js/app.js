@@ -9,22 +9,26 @@ function TaskCtrl($scope, $http, $timeout, toaster) {
 	stompClient.connect({}, function(frame) {
 		stompClient.subscribe('/user/queue/task-updates', function(event) {
 			var taskEvent = JSON.parse(event.body);
-			toaster.pop('success', taskEvent.type, taskEvent.data.title);
-			if (taskEvent.type == "ADDED") {
-				$scope.tasks.unshift(taskEvent.data);
-			} else if (taskEvent.type == "COMPLETED") {
-				$scope.completedTasks.unshift(taskEvent.data);
-				angular.forEach($scope.tasks, function(value, key) {
-					if (value.id == taskEvent.data.id) {
-						$scope.tasks.splice(key, 1);
-					}
-				});
-			} else if (taskEvent.type == "MODIFIED") {
-				angular.forEach($scope.tasks, function(value, key) {
-					if (value.id == taskEvent.data.id) {
-						$scope.tasks[key] = taskEvent.data;
-					}
-				});
+			toaster.pop('success', taskEvent.type, taskEvent.data);
+			if (taskEvent.type == "TaskCreatedEvent") {
+				var task = { 'id': taskEvent.data.id, 'title': taskEvent.data.title, 'completed': false, 'starred': false };
+				$scope.tasks.unshift(task);
+			} else if (taskEvent.type == "TaskCompletedEvent") {
+				var key = getTaskKey($scope.tasks, taskEvent.data.id);
+				var task = $scope.tasks[key];
+				task.completed = true;
+				$scope.completedTasks.unshift(task);
+				$scope.tasks.splice(key, 1);
+			} else if (taskEvent.type == "TaskStarredEvent") {
+				var key = getTaskKey($scope.tasks, taskEvent.data.id);
+				$scope.tasks[key].starred = true;
+			} else if (taskEvent.type == "TaskUnstarredEvent") {
+				var key = getTaskKey($scope.tasks, taskEvent.data.id);
+				$scope.tasks[key].starred = false;
+			} else {
+				// modify data for other events (such as modify title, etc)
+				var key = getTaskKey($scope.tasks, taskEvent.data.id);
+				angular.extend($scope.tasks[key], taskEvent.data);
 			}
 
 			$scope.$apply();
@@ -77,3 +81,13 @@ function TaskCtrl($scope, $http, $timeout, toaster) {
 
 	$scope.loadTasks();
 };
+
+function getTaskKey(tasks, id) {
+	var taskKey;
+	angular.forEach(tasks, function(value, key) {
+		if (value.id == id) {
+			taskKey = key;
+		}
+	});
+	return taskKey;
+}

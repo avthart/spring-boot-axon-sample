@@ -1,12 +1,24 @@
 package nl.avthart.todo.app.query.task;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
 
 /**
  * @author albert
  */
-@Entity
+@Document(indexName = "tasks", type = "entry")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@ToString
+@EqualsAndHashCode
 public class TaskEntry {
 
 	@Id
@@ -14,49 +26,12 @@ public class TaskEntry {
 	
 	private String username;
 	
+	@Setter
 	private String title;
 	
+	@Setter
 	private boolean completed;
 	
+	@Setter
 	private boolean starred;
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public void setCompleted(boolean completed) {
-		this.completed = completed;
-	}	
-	
-	public boolean isCompleted() {
-		return completed;
-	}
-	
-	public void setStarred(boolean starred) {
-		this.starred = starred;
-	}
-	
-	public boolean isStarred() {
-		return starred;
-	}
-	
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	
-	public String getUsername() {
-		return username;
-	}
 }
