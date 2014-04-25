@@ -7,13 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
-
 /**
  * @author albert
  */
-@Document(indexName = "tasks", type = "entry")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -21,7 +17,6 @@ import org.springframework.data.elasticsearch.annotations.Document;
 @EqualsAndHashCode
 public class TaskEntry {
 
-	@Id
 	private String id;
 	
 	private String username;

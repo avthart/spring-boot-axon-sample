@@ -1,8 +1,10 @@
 package nl.avthart.todo.app.configuration;
 
-import java.io.File;
+import io.orchestrate.client.Client;
+
 import java.util.Arrays;
 
+import nl.avthart.axon.repository.orchestrate.OrchestrateRepository;
 import nl.avthart.todo.app.domain.task.Task;
 
 import org.axonframework.commandhandling.CommandBus;
@@ -15,14 +17,12 @@ import org.axonframework.commandhandling.interceptors.BeanValidationInterceptor;
 import org.axonframework.eventhandling.EventBus;
 import org.axonframework.eventhandling.SimpleEventBus;
 import org.axonframework.eventhandling.annotation.AnnotationEventListenerBeanPostProcessor;
-import org.axonframework.eventsourcing.EventSourcingRepository;
-import org.axonframework.eventstore.fs.FileSystemEventStore;
-import org.axonframework.eventstore.fs.SimpleEventFileResolver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Axon Java Configuration with reasonable defaults like SimpleCommandBus, SimpleEventBus and GenericJpaRepository.
+ * Axon Java Configuration with reasonable defaults like SimpleCommandBus, SimpleEventBus and Orchestrate Repository.
  * @author albert
  */
 @Configuration
@@ -30,6 +30,9 @@ public class AxonConfiguration {
 	
 //	@Autowired
 //	private PlatformTransactionManager transactionManager;
+	
+	@Autowired
+	private Client client;
 	
 	@Bean
 	public AnnotationEventListenerBeanPostProcessor annotationEventListenerBeanPostProcessor() {
@@ -71,9 +74,8 @@ public class AxonConfiguration {
 //	}
 	
 	@Bean
-	public EventSourcingRepository<Task> taskRepository() {
-		FileSystemEventStore eventStore = new FileSystemEventStore(new SimpleEventFileResolver(new File("data/evenstore")));
-		EventSourcingRepository<Task> repository = new EventSourcingRepository<Task>(Task.class, eventStore);
+	public OrchestrateRepository<Task> taskRepository() {
+		OrchestrateRepository<Task> repository = new OrchestrateRepository<Task>(client, "tasks", Task.class);
 		repository.setEventBus(eventBus());
 		return repository;
 	}

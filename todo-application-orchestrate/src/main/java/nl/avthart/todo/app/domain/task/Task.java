@@ -18,10 +18,17 @@ import org.axonframework.eventhandling.annotation.EventHandler;
 import org.axonframework.eventsourcing.annotation.AbstractAnnotatedAggregateRoot;
 import org.axonframework.eventsourcing.annotation.AggregateIdentifier;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Task
  * @author albert
  */
+@JsonAutoDetect(getterVisibility= Visibility.NONE, setterVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE, creatorVisibility = Visibility.NONE)
 public class Task extends AbstractAnnotatedAggregateRoot<String> {
 
 	/**
@@ -30,9 +37,11 @@ public class Task extends AbstractAnnotatedAggregateRoot<String> {
 	private static final long serialVersionUID = -5977984483620451665L;
 	
 	@AggregateIdentifier
+	@JsonProperty 
 	private String id;
 	
 	@NotNull
+	@JsonProperty
 	private boolean completed;
 	
 	/**
