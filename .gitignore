@@ -1,3 +1,7 @@
 todo-application/.classpath
 todo-application/.project
 todo-application/target
+.DS_Store
+todo-application/.settings
+todo-application/.springBeans
+todo-application/data
