@@ -14,7 +14,6 @@ import nl.avthart.todo.app.rest.task.requests.CreateTaskRequest;
 import nl.avthart.todo.app.rest.task.requests.ModifyTitleRequest;
 
 import org.axonframework.commandhandling.gateway.CommandGateway;
-import org.axonframework.domain.DefaultIdentifierFactory;
 import org.axonframework.domain.IdentifierFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,20 +36,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TaskController {
 
-	private final IdentifierFactory identifierFactory = new DefaultIdentifierFactory();
-	
+	private final IdentifierFactory identifierFactory = IdentifierFactory.getInstance();
+
 	@Autowired
 	private TaskEntryRepository taskEntryRepository;
 
 	@Autowired
 	private SimpMessageSendingOperations messagingTemplate;
-	
+
 	@Autowired
 	private CommandGateway commandGateway;
 
 	@RequestMapping(value = "/api/tasks", method = RequestMethod.GET)
 	public @ResponseBody
-	Page<TaskEntry> findlAll(Principal principal, @RequestParam(required = false, defaultValue = "false") boolean completed, Pageable pageable) {
+	Page<TaskEntry> findAll(Principal principal, @RequestParam(required = false, defaultValue = "false") boolean completed, Pageable pageable) {
 		return taskEntryRepository.findByUsernameAndCompleted(principal.getName(), completed, pageable);
 	}
 
@@ -81,7 +80,7 @@ public class TaskController {
 	@RequestMapping(value = "/api/tasks/{identifier}/unstar", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void unstarTask(@PathVariable String identifier) {
-		throw new RuntimeException("Could not unstar task..."); 
+		throw new RuntimeException("Could not unstar task...");
 		//commandGateway.sendAndWait(new UnstarTaskCommand(identifier));
 	}
 
