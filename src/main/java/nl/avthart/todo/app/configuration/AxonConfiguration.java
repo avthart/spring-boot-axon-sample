@@ -1,7 +1,7 @@
 package nl.avthart.todo.app.configuration;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.Collections;
 
 import nl.avthart.todo.app.domain.task.Task;
 
@@ -48,7 +48,7 @@ public class AxonConfiguration {
 	@Bean
 	public CommandBus commandBus() {
 		SimpleCommandBus commandBus = new SimpleCommandBus();
-		commandBus.setHandlerInterceptors(Arrays.asList(new BeanValidationInterceptor()));
+		commandBus.setHandlerInterceptors(Collections.singletonList(new BeanValidationInterceptor()));
 //		commandBus.setTransactionManager(new SpringTransactionManager(transactionManager));
 		return commandBus;
 	}
