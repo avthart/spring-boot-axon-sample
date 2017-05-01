@@ -27,17 +27,17 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class AxonConfiguration {
-	
+
 //	@Autowired
 //	private PlatformTransactionManager transactionManager;
-	
+
 	@Bean
 	public AnnotationEventListenerBeanPostProcessor annotationEventListenerBeanPostProcessor() {
 		AnnotationEventListenerBeanPostProcessor processor = new AnnotationEventListenerBeanPostProcessor();
 		processor.setEventBus(eventBus());
 		return processor;
 	}
-	
+
 	@Bean
 	public AnnotationCommandHandlerBeanPostProcessor annotationCommandHandlerBeanPostProcessor() {
 		AnnotationCommandHandlerBeanPostProcessor processor = new AnnotationCommandHandlerBeanPostProcessor();
@@ -57,7 +57,7 @@ public class AxonConfiguration {
 	public EventBus eventBus() {
 		return new SimpleEventBus();
 	}
-	
+
 	@Bean
 	public CommandGatewayFactoryBean<CommandGateway> commandGatewayFactoryBean() {
 		CommandGatewayFactoryBean<CommandGateway> factory = new CommandGatewayFactoryBean<CommandGateway>();
@@ -69,7 +69,7 @@ public class AxonConfiguration {
 //	public EntityManagerProvider entityManagerProvider() {
 //		return new ContainerManagedEntityManagerProvider();
 //	}
-	
+
 	@Bean
 	public EventSourcingRepository<Task> taskRepository() {
 		FileSystemEventStore eventStore = new FileSystemEventStore(new SimpleEventFileResolver(new File("data/evenstore")));
@@ -77,10 +77,9 @@ public class AxonConfiguration {
 		repository.setEventBus(eventBus());
 		return repository;
 	}
-	
+
 	@Bean
-	public AggregateAnnotationCommandHandler<Task> taskCommandHandler() {
-		AggregateAnnotationCommandHandler<Task> commandHandler = AggregateAnnotationCommandHandler.subscribe(Task.class, taskRepository(), commandBus());
-		return commandHandler;
+	public AggregateAnnotationCommandHandler taskCommandHandler() {
+		return AggregateAnnotationCommandHandler.subscribe(Task.class, taskRepository(), commandBus());
 	}
 }
