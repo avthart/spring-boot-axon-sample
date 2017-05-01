@@ -38,14 +38,18 @@ public class TaskController {
 
 	private final IdentifierFactory identifierFactory = IdentifierFactory.getInstance();
 
-	@Autowired
-	private TaskEntryRepository taskEntryRepository;
+	private final TaskEntryRepository taskEntryRepository;
+
+	private final SimpMessageSendingOperations messagingTemplate;
+
+	private final CommandGateway commandGateway;
 
 	@Autowired
-	private SimpMessageSendingOperations messagingTemplate;
-
-	@Autowired
-	private CommandGateway commandGateway;
+	public TaskController(TaskEntryRepository taskEntryRepository, SimpMessageSendingOperations messagingTemplate, CommandGateway commandGateway) {
+		this.taskEntryRepository = taskEntryRepository;
+		this.messagingTemplate = messagingTemplate;
+		this.commandGateway = commandGateway;
+	}
 
 	@RequestMapping(value = "/api/tasks", method = RequestMethod.GET)
 	public @ResponseBody
