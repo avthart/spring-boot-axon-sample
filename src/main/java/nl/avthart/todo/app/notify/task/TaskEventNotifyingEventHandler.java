@@ -9,7 +9,7 @@ import nl.avthart.todo.app.domain.task.events.TaskTitleModifiedEvent;
 import nl.avthart.todo.app.query.task.TaskEntry;
 import nl.avthart.todo.app.query.task.TaskEntryRepository;
 
-import org.axonframework.eventhandling.annotation.EventHandler;
+import org.axonframework.eventhandling.EventHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;

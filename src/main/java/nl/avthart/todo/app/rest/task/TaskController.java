@@ -4,6 +4,7 @@ import java.security.Principal;
 
 import javax.validation.Valid;
 
+import lombok.RequiredArgsConstructor;
 import nl.avthart.todo.app.domain.task.commands.CompleteTaskCommand;
 import nl.avthart.todo.app.domain.task.commands.CreateTaskCommand;
 import nl.avthart.todo.app.domain.task.commands.ModifyTaskTitleCommand;
@@ -14,7 +15,7 @@ import nl.avthart.todo.app.rest.task.requests.CreateTaskRequest;
 import nl.avthart.todo.app.rest.task.requests.ModifyTitleRequest;
 
 import org.axonframework.commandhandling.gateway.CommandGateway;
-import org.axonframework.domain.IdentifierFactory;
+import org.axonframework.common.IdentifierFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author albert
  */
 @RestController
+@RequiredArgsConstructor
 public class TaskController {
 
 	private final IdentifierFactory identifierFactory = IdentifierFactory.getInstance();
@@ -43,13 +45,6 @@ public class TaskController {
 	private final SimpMessageSendingOperations messagingTemplate;
 
 	private final CommandGateway commandGateway;
-
-	@Autowired
-	public TaskController(TaskEntryRepository taskEntryRepository, SimpMessageSendingOperations messagingTemplate, CommandGateway commandGateway) {
-		this.taskEntryRepository = taskEntryRepository;
-		this.messagingTemplate = messagingTemplate;
-		this.commandGateway = commandGateway;
-	}
 
 	@RequestMapping(value = "/api/tasks", method = RequestMethod.GET)
 	public @ResponseBody

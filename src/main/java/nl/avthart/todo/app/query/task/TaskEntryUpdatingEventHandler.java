@@ -6,7 +6,7 @@ import nl.avthart.todo.app.domain.task.events.TaskStarredEvent;
 import nl.avthart.todo.app.domain.task.events.TaskUnstarredEvent;
 import nl.avthart.todo.app.domain.task.events.TaskTitleModifiedEvent;
 
-import org.axonframework.eventhandling.annotation.EventHandler;
+import org.axonframework.eventhandling.EventHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
