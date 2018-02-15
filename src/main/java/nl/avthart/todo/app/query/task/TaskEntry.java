@@ -7,18 +7,19 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 /**
  * @author albert
  */
-@Document(indexName = "tasks", type = "entry")
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(of = { "id" })
 public class TaskEntry {
 
 	@Id
