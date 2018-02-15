@@ -27,6 +27,12 @@ Implementation notes:
 - The query model is backed by a Spring Data JPA Repository
 - The user interface is updated asynchronously via stompjs over websockets using Spring Websockets support
 
+## Roadmap
+
+- Add unit and integration tests
+- Replace JPA EventStore with AxonDB
+- Convert AngularJS to Angular, ReactJS or other
+
 ## Documentation
 
 * Axon Framework - http://www.axonframework.org/
