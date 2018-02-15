@@ -4,7 +4,7 @@ import javax.validation.constraints.NotNull;
 
 import lombok.Value;
 
-import org.axonframework.commandhandling.annotation.TargetAggregateIdentifier;
+import org.axonframework.commandhandling.TargetAggregateIdentifier;
 
 /**
  * @author albert

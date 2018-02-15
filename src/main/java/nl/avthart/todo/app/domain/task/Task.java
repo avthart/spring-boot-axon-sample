@@ -12,17 +12,19 @@ import nl.avthart.todo.app.domain.task.events.TaskCreatedEvent;
 import nl.avthart.todo.app.domain.task.events.TaskStarredEvent;
 import nl.avthart.todo.app.domain.task.events.TaskTitleModifiedEvent;
 import nl.avthart.todo.app.domain.task.events.TaskUnstarredEvent;
+import org.axonframework.commandhandling.CommandHandler;
+import org.axonframework.commandhandling.model.AggregateIdentifier;
+import org.axonframework.eventsourcing.EventSourcingHandler;
+import org.axonframework.spring.stereotype.Aggregate;
 
-import org.axonframework.commandhandling.annotation.CommandHandler;
-import org.axonframework.eventhandling.annotation.EventHandler;
-import org.axonframework.eventsourcing.annotation.AbstractAnnotatedAggregateRoot;
-import org.axonframework.eventsourcing.annotation.AggregateIdentifier;
+import static org.axonframework.commandhandling.model.AggregateLifecycle.apply;
 
 /**
  * Task
  * @author albert
  */
-public class Task extends AbstractAnnotatedAggregateRoot<String> {
+@Aggregate
+public class Task {
 
 	/**
 	 * The constant serialVersionUID 
@@ -88,13 +90,13 @@ public class Task extends AbstractAnnotatedAggregateRoot<String> {
 		assertNotCompleted();
 		apply(new TaskTitleModifiedEvent(command.getId(), command.getTitle()));
 	}
-	
-	@EventHandler
+
+	@EventSourcingHandler
 	void on(TaskCreatedEvent event) {
 		this.id = event.getId();
 	}
-	
-	@EventHandler
+
+	@EventSourcingHandler
 	void on(TaskCompletedEvent event) {
 		this.completed = true;
 	}

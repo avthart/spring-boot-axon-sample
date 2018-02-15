@@ -2,7 +2,7 @@ package nl.avthart.todo.app.domain.task.commands;
 
 import lombok.Value;
 
-import org.axonframework.commandhandling.annotation.TargetAggregateIdentifier;
+import org.axonframework.commandhandling.TargetAggregateIdentifier;
 
 /**
  * @author albert
