@@ -38,4 +38,4 @@ Implementation notes:
 * Axon Framework - http://www.axonframework.org/
 * Spring Boot - http://projects.spring.io/spring-boot/
 * Spring Framework - http://projects.spring.io/spring-framework/
-* Spring Data ElasticSearch - https://github.com/spring-projects/spring-data-elasticsearch
+* Spring Data JPA - https://projects.spring.io/spring-data-jpa/
